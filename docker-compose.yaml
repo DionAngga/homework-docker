@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  database:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    environment: 
+      - MONGO_INITDB_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+      - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+      - ./.docker/mongodb/data/db/:/data/db/
+      - ./.docker/mongodb/data/log/:/var/log/mongodb/
+    ports:
+      - '27017-27019:27017-27019'
+  app: 
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    environment: 
+      - DB_URI=${DB_URI}
+      - DB_NAME=${DB_NAME}
+      - DB_COLLECTION_NAME=${DB_COLLECTION_NAME}
